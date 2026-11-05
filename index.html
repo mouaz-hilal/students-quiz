@@ -352,22 +352,18 @@
         <div class="grid-inputs">
             <div class="input-group">
                 <label for="gradeInput">الصف:</label>
-                <select id="gradeInput" class="input-field">
+                <select id="gradeInput" class="input-field" onchange="updateSections()">
                     <option value="">اختر الصف</option>
                     <option value="الصف السابع">الصف السابع</option>
                     <option value="الصف الثامن">الصف الثامن</option>
+                    <option value="الصف التاسع">الصف التاسع</option>
                 </select>
             </div>
 
             <div class="input-group">
                 <label for="sectionInput">الشعبة:</label>
                 <select id="sectionInput" class="input-field">
-                    <option value="">اختر الشعبة</option>
-                    <option value="الشعبة 1">الشعبة 1</option>
-                    <option value="الشعبة 2">الشعبة 2</option>
-                    <option value="الشعبة 3">الشعبة 3</option>
-                    <option value="الشعبة 4">الشعبة 4</option>
-                    <option value="الشعبة 5">الشعبة 5</option>
+                    <option value="">اختر الشعبة أولاً</option>
                 </select>
             </div>
         </div>
@@ -2456,6 +2452,28 @@
         const streakCount = document.getElementById('streak-count');
         const liveTimerTxt = document.getElementById('live-timer');
         const timerBox = document.getElementById('timer-box');
+
+        
+        function updateSections() {
+            const grade = document.getElementById('gradeInput').value;
+            const sectionSelect = document.getElementById('sectionInput');
+            
+            // تفريغ القائمة أولاً
+            sectionSelect.innerHTML = '<option value="">اختر الشعبة</option>';
+            
+            let sectionsCount = 0;
+            if (grade === 'الصف السابع') sectionsCount = 5;
+            else if (grade === 'الصف الثامن') sectionsCount = 6;
+            else if (grade === 'الصف التاسع') sectionsCount = 2;
+            
+            // إضافة الشعب المناسبة
+            for (let i = 1; i <= sectionsCount; i++) {
+                const opt = document.createElement('option');
+                opt.value = `الشعبة ${i}`;
+                opt.innerText = `الشعبة ${i}`;
+                sectionSelect.appendChild(opt);
+            }
+        }
 
         function formatCountdown(sec) {
             const m = Math.floor(sec / 60);
