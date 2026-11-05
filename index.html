@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسابقة مدرسة الشيخ بدر الدين الحسني</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #60a5fa;
+            --primary-yellow: #fbbf24;
+            --dark-yellow: #d97706;
+            --primary-red: #ef4444;
+            --dark-red: #b91c1c;
+            --primary-green: #10b981;
+            --dark-green: #047857;
+            --card-bg: #ffffff;
+            --text-dark: #1e293b;
+            --text-light: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--primary-blue);
+            background-image: 
+                radial-gradient(circle at top left, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at bottom right, rgba(0,0,0,0.3) 0%, transparent 50%),
+                linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            padding: 20px 10px;
+        }
+
+        .school-header {
+            text-align: center;
+            margin-bottom: 25px;
+            z-index: 10;
+        }
+        
+        .school-title {
+            font-size: clamp(2rem, 5vw, 2.8rem);
+            font-weight: 900;
+            color: var(--primary-yellow); 
+            text-shadow: 0 4px 0 var(--dark-red), 0 6px 15px rgba(0,0,0,0.4);
+            margin: 0;
+            line-height: 1.2;
+        }
+        
+        .school-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.3);
+            margin-top: 12px;
+            background: var(--primary-red);
+            padding: 8px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            border: 4px solid #fff;
+            box-shadow: 0 5px 0 var(--dark-red);
+        }
+
+        .container {
+            background: var(--card-bg); 
+            color: var(--text-dark);
+            border-radius: 28px;
+            padding: 35px 25px;
+            width: 100%;
+            max-width: 680px;
+            border: 6px solid var(--primary-yellow); 
+            box-shadow: 0 12px 0 var(--dark-yellow), 0 25px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* حقول إدخال بيانات الطالب */
+        .input-group {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: 3px solid #cbd5e1;
+            border-radius: 14px;
+            outline: none;
+            transition: all 0.2s;
+            background: #f8fafc;
+            color: var(--text-dark);
+        }
+        .input-field:focus {
+            border-color: var(--primary-blue);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-play {
+            background: var(--primary-yellow);
+            color: var(--dark-blue);
+            border: 3px solid var(--dark-yellow);
+            padding: 15px 40px;
+            font-size: 1.7rem;
+            font-weight: 900;
+            border-radius: 18px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 var(--dark-yellow);
+            transition: all 0.15s ease;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 420px;
+        }
+        .btn-play:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 var(--dark-yellow);
+        }
+
+        .btn-red {
+            background: var(--primary-red);
+            color: #fff;
+            border-color: var(--dark-red);
+            box-shadow: 0 8px 0 var(--dark-red);
+        }
+        .btn-red:active {
+            box-shadow: 0 0 0 var(--dark-red);
+        }
+
+        /* واجهة الأسئلة */
+        .stats-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-weight: 900;
+            font-size: 1.15rem;
+        }
+        
+        .stat-box {
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 12px;
+            border: 2px solid var(--dark-blue);
+            box-shadow: 0 5px 0 var(--dark-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-warning {
+            background: var(--primary-red) !important;
+            border-color: var(--dark-red) !important;
+            box-shadow: 0 5px 0 var(--dark-red) !important;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .streak-counter {
+            background: var(--primary-red);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 12px;
+            box-shadow: 0 5px 0 var(--dark-red);
+            border: 2px solid var(--dark-red);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .question-box {
+            font-size: clamp(1.3rem, 4vw, 1.7rem);
+            font-weight: 900;
+            margin-bottom: 25px;
+            color: var(--dark-blue);
+            background: #f0f9ff;
+            padding: 22px;
+            border-radius: 20px;
+            border: 4px solid var(--primary-yellow);
+            box-shadow: 0 8px 0 var(--dark-yellow);
+            line-height: 1.4;
+        }
+
+        .answers-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+        @media (min-width: 500px) {
+            .answers-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+        }
+
+        .answer-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: 3px solid var(--dark-blue);
+            padding: 18px 15px;
+            font-size: clamp(1.15rem, 3vw, 1.35rem);
+            font-weight: 900;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 var(--dark-blue);
+            transition: all 0.15s ease;
+        }
+        .answer-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 0 var(--dark-blue);
+        }
+        .answer-btn.correct {
+            background: var(--primary-green) !important;
+            border-color: var(--dark-green) !important;
+            box-shadow: 0 8px 0 var(--dark-green) !important;
+        }
+        .answer-btn.wrong {
+            background: var(--primary-red) !important;
+            border-color: var(--dark-red) !important;
+            box-shadow: 0 8px 0 var(--dark-red) !important;
+        }
+
+        .hidden { display: none !important; }
+
+        .progress-wrapper {
+            background: #e2e8f0;
+            border-radius: 20px;
+            border: 3px solid #cbd5e1;
+            height: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.1);
+        }
+        .progress-fill {
+            background: var(--primary-yellow);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: inset 0 -4px 0 rgba(0,0,0,0.15);
+        }
+
+        .score-board {
+            background: #f8fafc;
+            border: 4px solid var(--primary-blue);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            color: var(--text-dark);
+            box-shadow: 0 10px 0 var(--dark-blue);
+        }
+
+        .student-badge {
+            background: #e0f2fe;
+            color: var(--dark-blue);
+            border: 2px dashed var(--primary-blue);
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .status-sync {
+            margin-top: 15px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--dark-blue);
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 14px;
+            height: 14px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: fall 3s linear forwards;
+            border-radius: 4px;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg) scale(0.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-header" class="school-header">
+        <h1 class="school-title">مدرسة الشيخ بدر الدين الحسني</h1>
+        <div class="school-subtitle">مسابقة من سيربح المليون - المرحلة الأولى</div>
+    </div>
+
+    <!-- شاشة إدخال البيانات والبدء (بدون مراحل) -->
+    <div id="start-screen" class="container">
+        <div style="font-size: 4.5rem; margin-bottom: 10px;">📋</div>
+        <h2 style="font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); margin-bottom: 20px;">تسجيل بيانات الطالب</h2>
+        
+        <div class="input-group">
+            <label for="nameInput">اسم الطالب الثلاثي:</label>
+            <input type="text" id="nameInput" class="input-field" placeholder="اكتب اسمك هنا...">
+        </div>
+
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label for="gradeInput">الصف:</label>
+                <select id="gradeInput" class="input-field">
+                    <option value="">اختر الصف</option>
+                    <option value="الصف السابع">الصف السابع</option>
+                    <option value="الصف الثامن">الصف الثامن</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="sectionInput">الشعبة:</label>
+                <select id="sectionInput" class="input-field">
+                    <option value="">اختر الشعبة</option>
+                    <option value="الشعبة 1">الشعبة 1</option>
+                    <option value="الشعبة 2">الشعبة 2</option>
+                    <option value="الشعبة 3">الشعبة 3</option>
+                    <option value="الشعبة 4">الشعبة 4</option>
+                    <option value="الشعبة 5">الشعبة 5</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="background: #fef3c7; border: 2px dashed var(--dark-yellow); border-radius: 14px; padding: 12px; margin: 15px 0; color: #92400e; font-weight: 800; font-size: 1.1rem;">
+            ⏱️ مدة التحدي: 5 دقائق كاملة! أجب على أكبر قدر ممكن.
+        </div>
+
+        <button class="btn-play" onclick="startQuizDirectly()">ابدأ التحدي!</button>
+    </div>
+
+    <!-- شاشة الأسئلة المباشرة -->
+    <div id="quiz-screen" class="container hidden">
+        <div class="progress-wrapper">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-box">السؤال <span id="q-current">1</span>/<span id="q-total">200</span></div>
+            <div id="timer-box" class="stat-box" style="background: #1e293b; border-color: #0f172a; box-shadow: 0 5px 0 #0f172a;">⏱️ <span id="live-timer">05:00</span></div>
+            <div class="stat-box" style="background: var(--primary-yellow); color: var(--dark-blue); border-color: var(--dark-yellow); box-shadow: 0 5px 0 var(--dark-yellow);">النقاط: <span id="score-text">0</span></div>
+            <div id="streak-box" class="streak-counter hidden">
+                🔥 متتالية: <span id="streak-count">0</span>
+            </div>
+        </div>
+
+        <div id="question-text" class="question-box">نص السؤال يظهر هنا؟</div>
+        
+        <div id="answers-container" class="answers-grid"></div>
+
+        <button id="next-btn" class="btn-play hidden" onclick="nextQuestion()">التالي ➔</button>
+    </div>
+
+    <!-- شاشة النتيجة النهائية الكبرى -->
+    <div id="finale-screen" class="container hidden">
+        <div style="font-size: 5.5rem; margin-bottom: 5px;">🏆</div>
+        <h1 style="color: var(--primary-blue); font-weight: 900; font-size: 2.5rem; margin-bottom: 5px;">انتهى الاختبار!</h1>
+        
+        <div id="student-summary" class="student-badge"></div>
+
+        <div class="score-board">
+            <div style="font-size: 1.4rem; font-weight: 900;">النتيجة النهائية المحققة</div>
+            <div style="font-size: 4.2rem; font-weight: 900; color: var(--primary-red); margin: 5px 0;">
+                <span id="finale-score">0</span> / <span id="total-possible-score">200</span>
+            </div>
+            <div style="font-size: 1.7rem; font-weight: 900; color: var(--primary-blue); margin-top: 5px;">
+                النسبة المئوية: %<span id="finale-percent">0</span>
+            </div>
+            <div style="font-size: 1.3rem; font-weight: 900; color: var(--dark-yellow); margin-top: 15px;">
+                🔥 أعلى متتالية إجابات صحيحة: <span id="highest-streak-display">0</span>
+            </div>
+        </div>
+
+        <div id="sync-status" class="status-sync">جاري حفظ النتيجة في Google Sheets... ⏳</div>
+
+        <button class="btn-play btn-red" style="margin-top: 20px;" onclick="location.reload()">اختبار طالب آخر 🔄</button>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwjyHu3_5vP4qkl6viKKzwNsJM0lnrAv1IDfLRWK2WJixbHmysp-WOic7yezYtpOT7A/exec';
+
+        // 200 Questions sorted logically by difficulty roughly
+        const allQuestions = [
+    {
+        "q": "ما عاصمة كندا؟",
+        "a": [
+            "تورونتو",
+            "فانكوفر",
+            "أوتاوا",
+            "مونتريال"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما عاصمة فرنسا؟",
+        "a": [
+            "روما",
+            "باريس",
+            "مدريد",
+            "برلين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما عاصمة اليابان؟",
+        "a": [
+            "أوساكا",
+            "كيوتو",
+            "طوكيو",
+            "ناغويا"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما عاصمة السعودية؟",
+        "a": [
+            "جدة",
+            "مكة",
+            "الرياض",
+            "الدمام"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما عاصمة أستراليا؟",
+        "a": [
+            "سيدني",
+            "ملبورن",
+            "كانبرا",
+            "بيرث"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما عاصمة الأرجنتين؟",
+        "a": [
+            "ليما",
+            "بوينس آيرس",
+            "سانتياغو",
+            "مونتيفيديو"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم دقيقة في الساعة؟",
+        "a": [
+            "30",
+            "45",
+            "60",
+            "90"
+        ],
+        "c": 2
+    },
+    {
+        "q": "كم يوماً في الأسبوع؟",
+        "a": [
+            "خمسة",
+            "ستة",
+            "سبعة",
+            "ثمانية"
+        ],
+        "c": 2
+    },
+    {
+        "q": "كم عدد أرجل العنكبوت؟",
+        "a": [
+            "ست",
+            "ثمان",
+            "عشر",
+            "اثنتا عشرة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أكبر محيط في العالم؟",
+        "a": [
+            "الأطلسي",
+            "الهادئ",
+            "الهندي",
+            "المتجمد الشمالي"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم عدد الخلفاء الراشدين؟",
+        "a": [
+            "ثلاثة",
+            "خمسة",
+            "أربعة",
+            "ستة"
+        ],
+        "c": 2
+    },
+    {
+        "q": "كم عدد حجرات قلب التمساح؟",
+        "a": [
+            "اثنتان",
+            "ثلاث",
+            "أربع",
+            "خمس"
+        ],
+        "c": 2
+    },
+    {
+        "q": "من هو أول الخلفاء الراشدين؟",
+        "a": [
+            "أبو بكر الصديق",
+            "عمر بن الخطاب",
+            "عثمان بن عفان",
+            "علي بن أبي طالب"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما أكبر حيوان حي على الأرض؟",
+        "a": [
+            "الفيل الأفريقي",
+            "الحوت الأزرق",
+            "الزرافة",
+            "القرش الأبيض"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الكوكب الأقرب إلى الشمس؟",
+        "a": [
+            "الأرض",
+            "الزهرة",
+            "عطارد",
+            "المريخ"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما أكبر قارة من حيث المساحة؟",
+        "a": [
+            "أفريقيا",
+            "آسيا",
+            "أوروبا",
+            "أستراليا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أكبر صحراء حارة في العالم؟",
+        "a": [
+            "غوبي",
+            "الصحراء الكبرى",
+            "أتاكاما",
+            "كالاهاري"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أكبر دلتا نهرية في العالم؟",
+        "a": [
+            "دلتا النيل",
+            "دلتا الغانج وبراهمابوترا",
+            "دلتا المسيسيبي",
+            "دلتا الميكونغ"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم عدد عظام الإنسان البالغ عادة؟",
+        "a": [
+            "106",
+            "206",
+            "306",
+            "406"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أكبر أنواع القطط البرية الحية؟",
+        "a": [
+            "الأسد",
+            "النمر (الببر)",
+            "الفهد الصياد",
+            "الوشق"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أكبر كوكب في المجموعة الشمسية؟",
+        "a": [
+            "زحل",
+            "المشتري",
+            "نبتون",
+            "الأرض"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أكبر نوع حي من السلاحف البحرية؟",
+        "a": [
+            "السلحفاة الخضراء",
+            "السلحفاة الجلدية الظهر",
+            "سلحفاة منقار الصقر",
+            "السلحفاة ضخمة الرأس"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم دقيقة مدة شوط كرة القدم النظامي؟",
+        "a": [
+            "30",
+            "40",
+            "45",
+            "50"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما أكبر طائر حي من حيث الطول والوزن؟",
+        "a": [
+            "النسر",
+            "النعامة",
+            "البطريق الإمبراطور",
+            "البجعة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي حضارة اشتهرت بمدينة روما عاصمةً لها؟",
+        "a": [
+            "الرومانية",
+            "المايا",
+            "الإنكا",
+            "الفارسية"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما أكبر جزيرة في العالم باستثناء القارات؟",
+        "a": [
+            "مدغشقر",
+            "غرينلاند",
+            "بورنيو",
+            "غينيا الجديدة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم عدد ألوان قوس قزح في التقسيم التقليدي؟",
+        "a": [
+            "خمسة",
+            "ستة",
+            "سبعة",
+            "ثمانية"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما عاصمة الدولة العباسية التي أسسها المنصور؟",
+        "a": [
+            "دمشق",
+            "القاهرة",
+            "بغداد",
+            "الكوفة"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما لون البطاقة التي تعني الطرد في كرة القدم؟",
+        "a": [
+            "أصفر",
+            "أحمر",
+            "أزرق",
+            "أخضر"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم أصغر وحدة بنائية ووظيفية للكائنات الحية؟",
+        "a": [
+            "النسيج",
+            "الخلية",
+            "العضو",
+            "الجهاز"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي بحر يُعد أكبر مسطح مائي مغلق داخلي في العالم؟",
+        "a": [
+            "بحر قزوين",
+            "البحر الميت",
+            "بحر آرال",
+            "بحر مرمرة"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما اسم أول عاصمة للدولة الفاطمية في شمال أفريقيا؟",
+        "a": [
+            "القيروان",
+            "المهدية",
+            "تونس",
+            "فاس"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الخليفة العباسي الذي نقل عاصمة الخلافة إلى سامراء؟",
+        "a": [
+            "المعتصم بالله",
+            "المتوكل",
+            "الواثق",
+            "المأمون"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي دولة تملك أكبر مساحة من الغابات المطيرة الأمازونية؟",
+        "a": [
+            "بيرو",
+            "كولومبيا",
+            "البرازيل",
+            "فنزويلا"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما اسم الصبغة المسؤولة عن لون دم معظم الفقاريات الأحمر؟",
+        "a": [
+            "الميلانين",
+            "الهيموغلوبين",
+            "الكلوروفيل",
+            "الكاروتين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم عدد الكروموسومات في الخلية الجسدية البشرية الطبيعية؟",
+        "a": [
+            "23",
+            "44",
+            "46",
+            "48"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما الحيوان الذي يملك أكبر دماغ من حيث الكتلة بين الحيوانات الحية؟",
+        "a": [
+            "الفيل",
+            "حوت العنبر",
+            "الإنسان",
+            "الدلفين قاروري الأنف"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم ضلعاً للمثلث؟",
+        "a": [
+            "اثنان",
+            "ثلاثة",
+            "أربعة",
+            "خمسة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الدولة التي فازت بأكبر عدد من بطولات كأس العالم للرجال حتى 2026؟",
+        "a": [
+            "ألمانيا",
+            "إيطاليا",
+            "البرازيل",
+            "الأرجنتين"
+        ],
+        "c": 2
+    },
+    {
+        "q": "من آخر قياصرة روسيا؟",
+        "a": [
+            "بطرس الأكبر",
+            "نيقولا الثاني",
+            "ألكسندر الأول",
+            "إيفان الرابع"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما وحدة قياس التردد؟",
+        "a": [
+            "هرتز",
+            "جول",
+            "نيوتن",
+            "باسكال"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما الدولة التي تحتوي على أكبر عدد من البحيرات الطبيعية وفق العدّ الشائع؟",
+        "a": [
+            "فنلندا",
+            "كندا",
+            "روسيا",
+            "السويد"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من رسم لوحة الموناليزا؟",
+        "a": [
+            "بيكاسو",
+            "ليوناردو دا فينشي",
+            "فان غوخ",
+            "مايكل أنجلو"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي شهر يصوم المسلمون؟",
+        "a": [
+            "محرم",
+            "شعبان",
+            "شوال",
+            "رمضان"
+        ],
+        "c": 3
+    },
+    {
+        "q": "من مؤسس الدولة الأيوبية؟",
+        "a": [
+            "صلاح الدين الأيوبي",
+            "نور الدين زنكي",
+            "الظاهر بيبرس",
+            "سيف الدين قطز"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في أي قارة تقع البرازيل؟",
+        "a": [
+            "أفريقيا",
+            "أوروبا",
+            "أمريكا الجنوبية",
+            "آسيا"
+        ],
+        "c": 2
+    },
+    {
+        "q": "كم جناحاً للنحلة البالغة؟",
+        "a": [
+            "اثنان",
+            "أربعة",
+            "ستة",
+            "ثمانية"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من أول زوجات النبي محمد ﷺ؟",
+        "a": [
+            "عائشة",
+            "حفصة",
+            "خديجة",
+            "أم سلمة"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما القبلة الأولى للمسلمين؟",
+        "a": [
+            "الكعبة",
+            "المسجد النبوي",
+            "المسجد الأقصى",
+            "مسجد قباء"
+        ],
+        "c": 2
+    },
+    {
+        "q": "أي طائر لا يستطيع الطيران؟",
+        "a": [
+            "الصقر",
+            "النعامة",
+            "الحمامة",
+            "السنونو"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي الحيوانات التالية يبيض؟",
+        "a": [
+            "القطة",
+            "الحصان",
+            "السلحفاة",
+            "الدلفين"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما نوع الهيكل عند الحشرات؟",
+        "a": [
+            "داخلي عظمي",
+            "خارجي",
+            "غضروفي داخلي",
+            "مائي فقط"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الصحابي الملقب بالفاروق؟",
+        "a": [
+            "عمر بن الخطاب",
+            "خالد بن الوليد",
+            "أبو عبيدة",
+            "الزبير بن العوام"
+        ],
+        "c": 0
+    },
+    {
+        "q": "من آخر حكام غرناطة المسلمين؟",
+        "a": [
+            "يوسف بن تاشفين",
+            "محمد الثاني عشر (أبو عبد الله الصغير)",
+            "عبد الرحمن الداخل",
+            "المعتمد بن عباد"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي دولة يمر بها خط الاستواء؟",
+        "a": [
+            "إيطاليا",
+            "الإكوادور",
+            "كندا",
+            "تركيا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الدولة التي تضم جبل فوجي؟",
+        "a": [
+            "الصين",
+            "اليابان",
+            "كوريا الجنوبية",
+            "نيبال"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم أعمق بحيرة في العالم؟",
+        "a": [
+            "فيكتوريا",
+            "بايكال",
+            "سوبيريور",
+            "تنغانيقا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما قيمة العدد الذري للكربون؟",
+        "a": [
+            "4",
+            "6",
+            "8",
+            "12"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من أول رئيس للولايات المتحدة؟",
+        "a": [
+            "أبراهام لينكولن",
+            "جورج واشنطن",
+            "توماس جيفرسون",
+            "جون آدامز"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اللغة الرسمية في البرازيل؟",
+        "a": [
+            "الإسبانية",
+            "البرتغالية",
+            "الفرنسية",
+            "الإنجليزية"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي مدينة وُلد النبي محمد ﷺ؟",
+        "a": [
+            "المدينة المنورة",
+            "مكة المكرمة",
+            "الطائف",
+            "القدس"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من آخر خلفاء بني أمية في دمشق؟",
+        "a": [
+            "مروان بن محمد",
+            "عبد الملك بن مروان",
+            "هشام بن عبد الملك",
+            "الوليد بن يزيد"
+        ],
+        "c": 0
+    },
+    {
+        "q": "من مؤسس الإمبراطورية المغولية؟",
+        "a": [
+            "قوبلاي خان",
+            "جنكيز خان",
+            "تيمورلنك",
+            "هولاكو"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي حيوان يشتهر بخرطومه الطويل؟",
+        "a": [
+            "وحيد القرن",
+            "الفيل",
+            "فرس النهر",
+            "الجاموس"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي قارة تقع الصحراء الكبرى؟",
+        "a": [
+            "آسيا",
+            "أفريقيا",
+            "أستراليا",
+            "أوروبا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي دولة يقع بركان كراكاتوا؟",
+        "a": [
+            "إندونيسيا",
+            "الفلبين",
+            "اليابان",
+            "آيسلندا"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما وحدة قياس السعة الكهربائية؟",
+        "a": [
+            "هنري",
+            "فاراد",
+            "تسلا",
+            "ويبر"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من أول إنسان سار على سطح القمر؟",
+        "a": [
+            "يوري غاغارين",
+            "نيل أرمسترونغ",
+            "باز ألدرين",
+            "جون غلين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كيف تتنفس الأسماك العظمية عادة؟",
+        "a": [
+            "بالرئتين",
+            "بالخياشيم",
+            "بالجلد فقط",
+            "بالقصبات الهوائية"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي مجموعة تنتمي إليها الفراشات؟",
+        "a": [
+            "الثدييات",
+            "الزواحف",
+            "الحشرات",
+            "البرمائيات"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما العنصر الأكثر وفرة في الكون؟",
+        "a": [
+            "الأكسجين",
+            "الهيدروجين",
+            "الحديد",
+            "الكربون"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي رياضة تُستخدم كلمة إيبون؟",
+        "a": [
+            "الجودو",
+            "التنس",
+            "الملاكمة",
+            "الغولف"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في أي قارة بدأت الثورة الصناعية؟",
+        "a": [
+            "آسيا",
+            "أفريقيا",
+            "أوروبا",
+            "أمريكا الجنوبية"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما أعلى جبل فوق مستوى سطح البحر؟",
+        "a": [
+            "كي 2",
+            "إيفرست",
+            "كليمنجارو",
+            "مون بلان"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أعمق نقطة معروفة في المحيطات؟",
+        "a": [
+            "خندق بورتوريكو",
+            "تشالنجر ديب في خندق ماريانا",
+            "خندق جاوة",
+            "خندق تونغا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما العضو الذي يضخ الدم في الجسم؟",
+        "a": [
+            "الرئة",
+            "القلب",
+            "الكبد",
+            "المعدة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الجهاز الذي يقيس الضغط الجوي؟",
+        "a": [
+            "الترمومتر",
+            "البارومتر",
+            "الأميتر",
+            "الفولتميتر"
+        ],
+        "c": 1
+    },
+    {
+        "q": "إلى أي مدينة هاجر النبي ﷺ من مكة؟",
+        "a": [
+            "الطائف",
+            "المدينة المنورة",
+            "البصرة",
+            "دمشق"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي بلد نشأت الحضارة الفرعونية؟",
+        "a": [
+            "العراق",
+            "مصر",
+            "اليونان",
+            "إيطاليا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي الحيوانات التالية من الثدييات؟",
+        "a": [
+            "التمساح",
+            "الضفدع",
+            "الدلفين",
+            "القرش"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما الحيوان الذي يمتلك ثلاثة قلوب؟",
+        "a": [
+            "الأخطبوط",
+            "الحوت",
+            "الدب",
+            "القرش"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما النهر الذي يمر بمدينة القاهرة؟",
+        "a": [
+            "الأمازون",
+            "النيل",
+            "الدانوب",
+            "السين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الكوكب المعروف بالكوكب الأحمر؟",
+        "a": [
+            "الزهرة",
+            "المريخ",
+            "المشتري",
+            "عطارد"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ماذا تأكل الباندا العملاقة غالباً؟",
+        "a": [
+            "الأسماك",
+            "الخيزران",
+            "الحشرات",
+            "اللحوم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم صغير الضفدع في طوره المائي؟",
+        "a": [
+            "يرقة فراشة",
+            "شرغوف",
+            "جرو",
+            "حورية نحل"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم الخط الوهمي عند خط عرض صفر؟",
+        "a": [
+            "مدار السرطان",
+            "خط الاستواء",
+            "خط غرينتش",
+            "مدار الجدي"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما وحدة قياس شدة التيار الكهربائي؟",
+        "a": [
+            "الفولت",
+            "الأمبير",
+            "الواط",
+            "الأوم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم حلقة في شعار الألعاب الأولمبية؟",
+        "a": [
+            "4",
+            "5",
+            "6",
+            "7"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما أول مسجد بناه النبي ﷺ بعد الهجرة؟",
+        "a": [
+            "المسجد الحرام",
+            "المسجد الأقصى",
+            "مسجد قباء",
+            "مسجد الكوفة"
+        ],
+        "c": 2
+    },
+    {
+        "q": "من مؤسس الدولة الأموية وأول خلفائها؟",
+        "a": [
+            "عبد الملك بن مروان",
+            "معاوية بن أبي سفيان",
+            "الوليد بن عبد الملك",
+            "مروان بن الحكم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الدولة التي اشتهرت بحضارة الإنكا؟",
+        "a": [
+            "بيرو",
+            "اليابان",
+            "مصر",
+            "الهند"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما الغاز الذي يحتاجه الإنسان للتنفس؟",
+        "a": [
+            "النيتروجين",
+            "الأكسجين",
+            "الهيدروجين",
+            "الهيليوم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي رياضة تُستخدم المضارب والريشة؟",
+        "a": [
+            "التنس",
+            "الريشة الطائرة",
+            "الاسكواش",
+            "كرة الطاولة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الحيوان الذي يُعرف بسفينة الصحراء؟",
+        "a": [
+            "الجمل",
+            "الحمار الوحشي",
+            "اللاما",
+            "الأيل"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما أطول سلسلة جبال قارية على اليابسة؟",
+        "a": [
+            "الألب",
+            "الأنديز",
+            "الهيمالايا",
+            "الأورال"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما طول سباق الماراثون الرسمي تقريباً؟",
+        "a": [
+            "40 كم",
+            "42.195 كم",
+            "45 كم",
+            "50 كم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما المادة الأساسية في قرون وحيد القرن؟",
+        "a": [
+            "العاج",
+            "الكيراتين",
+            "الكالسيوم النقي",
+            "الكيتين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما المضيق الذي يفصل المغرب عن إسبانيا؟",
+        "a": [
+            "هرمز",
+            "جبل طارق",
+            "باب المندب",
+            "البوسفور"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي دولة تضم مدينة ماتشو بيتشو الأثرية؟",
+        "a": [
+            "المكسيك",
+            "بيرو",
+            "تشيلي",
+            "بوليفيا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي دولة تقع فيها صحراء أتاكاما أساساً؟",
+        "a": [
+            "تشيلي",
+            "البرازيل",
+            "مصر",
+            "منغوليا"
+        ],
+        "c": 0
+    },
+    {
+        "q": "كم شوطاً في مباراة كرة القدم النظامية؟",
+        "a": [
+            "2",
+            "3",
+            "4",
+            "5"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما الرياضة التي اشتهر بها مايكل فيلبس؟",
+        "a": [
+            "الجري",
+            "السباحة",
+            "الدراجات",
+            "التنس"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم الغار الذي نزل فيه الوحي أول مرة؟",
+        "a": [
+            "ثور",
+            "حراء",
+            "أحد",
+            "الرقيم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الخليفة العباسي الذي أسس مدينة بغداد؟",
+        "a": [
+            "هارون الرشيد",
+            "أبو جعفر المنصور",
+            "المأمون",
+            "المعتصم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من بنى سور الصين العظيم عبر عصور متعددة؟",
+        "a": [
+            "الحضارات الصينية",
+            "الرومان",
+            "المغول",
+            "الفرس"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي عضو مسؤول أساساً عن التفكير والذاكرة؟",
+        "a": [
+            "القلب",
+            "الدماغ",
+            "الكبد",
+            "الكلى"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم نقطة تساوي الرمية الحرة في كرة السلة؟",
+        "a": [
+            "1",
+            "2",
+            "3",
+            "4"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما أسرع حيوان بري في العدو لمسافات قصيرة؟",
+        "a": [
+            "الأسد",
+            "الفهد الصياد",
+            "الحصان",
+            "الغزال"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي حيوان له بصمات أصابع تشبه بصمات البشر؟",
+        "a": [
+            "الكوالا",
+            "الحصان",
+            "الحوت",
+            "البطريق"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي بحر يفصل بين شمال أفريقيا وجنوب أوروبا؟",
+        "a": [
+            "البحر الأحمر",
+            "البحر المتوسط",
+            "بحر العرب",
+            "بحر قزوين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم المقياس الذي يقيس الحموضة والقلوية؟",
+        "a": [
+            "pH",
+            "ريختر",
+            "بوفورت",
+            "موهس"
+        ],
+        "c": 0
+    },
+    {
+        "q": "كم نقطة للرمية من خارج القوس في كرة السلة؟",
+        "a": [
+            "1",
+            "2",
+            "3",
+            "4"
+        ],
+        "c": 2
+    },
+    {
+        "q": "أي طائر يُعرف بقدرته على الطيران إلى الخلف؟",
+        "a": [
+            "الطائر الطنان",
+            "العقاب",
+            "اللقلق",
+            "الغراب"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما اسم الهضبة الواسعة المعروفة بسقف العالم؟",
+        "a": [
+            "هضبة التبت",
+            "هضبة الدكن",
+            "هضبة الأناضول",
+            "هضبة باتاغونيا"
+        ],
+        "c": 0
+    },
+    {
+        "q": "كم لاعباً في فريق كرة السلة على أرض الملعب؟",
+        "a": [
+            "4",
+            "5",
+            "6",
+            "7"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما المضيق الذي يربط البحر الأسود ببحر مرمرة؟",
+        "a": [
+            "الدردنيل",
+            "البوسفور",
+            "جبل طارق",
+            "هرمز"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم لاعباً في فريق الكرة الطائرة داخل الملعب؟",
+        "a": [
+            "5",
+            "6",
+            "7",
+            "8"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم يبلغ ارتفاع سلة كرة السلة عن الأرض تقريباً؟",
+        "a": [
+            "2.75 متر",
+            "3.05 متر",
+            "3.5 متر",
+            "4 أمتار"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من القائد القرطاجي الذي عبر جبال الألب بالفيلة؟",
+        "a": [
+            "هانيبال",
+            "سكيبيو",
+            "يوليوس قيصر",
+            "بطليموس"
+        ],
+        "c": 0
+    },
+    {
+        "q": "كم متراً طول سباق العدو القصير الأشهر أولمبياً؟",
+        "a": [
+            "100",
+            "150",
+            "300",
+            "500"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما اسم سباق الدراجات الشهير الذي يقام في فرنسا؟",
+        "a": [
+            "جيرو إيطاليا",
+            "طواف فرنسا",
+            "فويلتا إسبانيا",
+            "باريس روبيه"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الخليفة الأموي الذي بُنيت في عهده قبة الصخرة؟",
+        "a": [
+            "عمر بن عبد العزيز",
+            "هشام بن عبد الملك",
+            "عبد الملك بن مروان",
+            "يزيد بن معاوية"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما الاسم الذي يُطلق على الثدييات التي تضع البيض؟",
+        "a": [
+            "الجرابيات",
+            "وحيدات المسلك",
+            "المشيميات",
+            "الرئيسيات"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما القناة التي تربط البحر المتوسط بالبحر الأحمر؟",
+        "a": [
+            "بنما",
+            "السويس",
+            "كيل",
+            "كورينث"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الدولة التي فازت بكأس العالم لكرة القدم 2018؟",
+        "a": [
+            "ألمانيا",
+            "فرنسا",
+            "الأرجنتين",
+            "كرواتيا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي حيوان بحري يُعد من اللافقاريات رغم اسمه الشائع؟",
+        "a": [
+            "فرس البحر",
+            "نجم البحر",
+            "حصان البحر",
+            "فقمة البحر"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الرياضة التي يُستخدم فيها مصطلح الضربة القاضية؟",
+        "a": [
+            "الملاكمة",
+            "السباحة",
+            "الغولف",
+            "التجديف"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما الدولة التي استضافت كأس العالم لكرة القدم 2022؟",
+        "a": [
+            "روسيا",
+            "قطر",
+            "البرازيل",
+            "ألمانيا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي حرب دارت بين الشمال والجنوب في الولايات المتحدة؟",
+        "a": [
+            "الحرب الأهلية الأمريكية",
+            "حرب القرم",
+            "حرب المئة عام",
+            "حرب السنوات السبع"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في أي رياضة تُستخدم سيوف الفلوريه والإيبيه والسابر؟",
+        "a": [
+            "المبارزة",
+            "الرماية",
+            "الجودو",
+            "التجديف"
+        ],
+        "c": 0
+    },
+    {
+        "q": "من الخليفة الذي جُمع القرآن في عهده أول مرة في مصحف؟",
+        "a": [
+            "أبو بكر الصديق",
+            "عثمان بن عفان",
+            "علي بن أبي طالب",
+            "معاوية بن أبي سفيان"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما الثديي الوحيد القادر على الطيران الحقيقي المستمر؟",
+        "a": [
+            "السنجاب الطائر",
+            "الخفاش",
+            "الليمور",
+            "الكوالا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "كم لاعباً في فريق كرة القدم داخل الملعب عند البداية؟",
+        "a": [
+            "9",
+            "10",
+            "11",
+            "12"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما اسم الجسيم الذي يحمل شحنة كهربائية سالبة في الذرة؟",
+        "a": [
+            "البروتون",
+            "النيوترون",
+            "الإلكترون",
+            "الفوتون"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما اسم الإنزيم الموجود في اللعاب الذي يبدأ هضم النشا؟",
+        "a": [
+            "بيبسين",
+            "أميلاز",
+            "ليباز",
+            "تربسين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الزعيم الذي قاد استقلال الهند عبر المقاومة السلمية؟",
+        "a": [
+            "غاندي",
+            "نهرو",
+            "جناح",
+            "تيلاك"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي فيتامين ينتجه الجلد عند التعرض المناسب لأشعة الشمس؟",
+        "a": [
+            "A",
+            "B12",
+            "C",
+            "D"
+        ],
+        "c": 3
+    },
+    {
+        "q": "في أي رياضة يستخدم اللاعب عصا لضرب كرة صغيرة إلى حفرة؟",
+        "a": [
+            "الهوكي",
+            "الغولف",
+            "الكريكيت",
+            "البولو"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي عضو تستخدمه أسماك القرش لاستشعار المجالات الكهربائية؟",
+        "a": [
+            "أمبولات لورنزيني",
+            "الخط الجانبي فقط",
+            "المثانة الهوائية",
+            "الخياشيم"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي حيوان يمتلك أطول فترة حمل تقريباً بين الثدييات البرية؟",
+        "a": [
+            "الزرافة",
+            "الفيل",
+            "الأسد",
+            "الحصان"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الإمبراطور الروماني الذي أصدر مرسوم ميلانو مع ليسينيوس؟",
+        "a": [
+            "نيرون",
+            "قسطنطين الأول",
+            "أغسطس",
+            "تراجان"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم النظام الذي تستخدمه الخفافيش لتحديد المواقع بالصوت؟",
+        "a": [
+            "تحديد الموقع بالصدى",
+            "المغناطيسية الحيوية",
+            "الاستقطاب الضوئي",
+            "التمويه الصوتي"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي مجموعة حيوانية تمتلك خلايا لاسعة تسمى الخلايا القراصية؟",
+        "a": [
+            "الرخويات",
+            "اللاسعات",
+            "شوكيات الجلد",
+            "المفصليات"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما البحر الواقع بين شبه الجزيرة العربية وشمال شرق أفريقيا؟",
+        "a": [
+            "بحر البلطيق",
+            "البحر الأحمر",
+            "بحر الشمال",
+            "بحر اليابان"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما المسافة الرسمية بين قواعد ملعب البيسبول الأمريكي (MLB)؟",
+        "a": [
+            "60 قدماً",
+            "75 قدماً",
+            "90 قدماً",
+            "100 قدم"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما اسم الظاهرة التي ينحني فيها الضوء عند انتقاله بين وسطين؟",
+        "a": [
+            "الانعكاس",
+            "الانكسار",
+            "الحيود فقط",
+            "الاستقطاب"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي رياضة يُستخدم مصطلح هاتريك غالباً لتسجيل ثلاثة أهداف؟",
+        "a": [
+            "كرة القدم",
+            "الجمباز",
+            "التجديف",
+            "المبارزة"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما المادة التي تتجمد عادة عند صفر مئوي في الضغط الجوي العادي؟",
+        "a": [
+            "الزيت",
+            "الماء النقي",
+            "الزئبق",
+            "الإيثانول"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الخليفة العباسي الذي ارتبط اسمه ببيت الحكمة وازدهار الترجمة؟",
+        "a": [
+            "المأمون",
+            "المستعصم",
+            "المهدي",
+            "السفاح"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في سباقات الفورمولا 1، ما معنى العلم الأزرق عادة للسائق الأبطأ؟",
+        "a": [
+            "توقف فوراً",
+            "افسح المجال لسيارة أسرع تقترب لتجاوزك بلفة",
+            "نهاية السباق",
+            "وجود مطر"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي عالم اقترح نموذج اللولب المزدوج للحمض النووي مع فرانسيس كريك؟",
+        "a": [
+            "جيمس واتسون",
+            "لويس باستور",
+            "غريغور مندل",
+            "روبرت هوك"
+        ],
+        "c": 0
+    },
+    {
+        "q": "كم مجموعة يجب الفوز بها عادة لحسم مباراة تنس الرجال في البطولات الكبرى؟",
+        "a": [
+            "مجموعتان",
+            "ثلاث مجموعات",
+            "أربع مجموعات",
+            "خمس مجموعات"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من الإمبراطور البيزنطي الذي أمر ببناء آيا صوفيا بصورتها الكبرى في القرن السادس؟",
+        "a": [
+            "هرقل",
+            "جستنيان الأول",
+            "قسطنطين الحادي عشر",
+            "باسيل الثاني"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم الضربة التي تحقق نقطة مباشرة من الإرسال في التنس دون أن يلمسها المستقبل؟",
+        "a": [
+            "آيس",
+            "لوب",
+            "فولي",
+            "دروب شوت"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما عدد الأشواط الأساسية في مباراة الكرة الطائرة التي يمكن أن تصل إلى الحد الأقصى؟",
+        "a": [
+            "3",
+            "4",
+            "5",
+            "6"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما الحد الأقصى لعدد اللمسات المتتالية للفريق في الكرة الطائرة قبل إعادة الكرة، باستثناء لمسة الصد؟",
+        "a": [
+            "2",
+            "3",
+            "4",
+            "5"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من مؤلف رواية «البؤساء»؟",
+        "a": [
+            "فيكتور هوغو",
+            "تولستوي",
+            "ديكنز",
+            "دوستويفسكي"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في أي سنة سقط جدار برلين؟",
+        "a": [
+            "1975",
+            "1989",
+            "1995",
+            "2001"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الرمز الكيميائي للذهب؟",
+        "a": [
+            "Ag",
+            "Au",
+            "Fe",
+            "Cu"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي عام هجري وقعت غزوة الخندق؟",
+        "a": [
+            "3 هـ",
+            "4 هـ",
+            "5 هـ",
+            "7 هـ"
+        ],
+        "c": 2
+    },
+    {
+        "q": "في أي سنة اندلعت الثورة الفرنسية؟",
+        "a": [
+            "1688",
+            "1776",
+            "1789",
+            "1815"
+        ],
+        "c": 2
+    },
+    {
+        "q": "من قائد الثورة البلشفية عام 1917؟",
+        "a": [
+            "لينين",
+            "ستالين",
+            "تروتسكي",
+            "خروتشوف"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما اسم السفينة التي غرقت سنة 1912؟",
+        "a": [
+            "بريتانيك",
+            "تايتانيك",
+            "كوين ماري",
+            "مايفلاور"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي سنة بدأت الحرب العالمية الأولى؟",
+        "a": [
+            "1905",
+            "1914",
+            "1939",
+            "1945"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من القائد الذي استعاد القدس سنة 1187م؟",
+        "a": [
+            "نور الدين زنكي",
+            "صلاح الدين الأيوبي",
+            "الظاهر بيبرس",
+            "قطز"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي سنة انتهت الحرب العالمية الثانية؟",
+        "a": [
+            "1918",
+            "1939",
+            "1945",
+            "1950"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما اسم عملية تغير شكل اليرقة إلى فراشة؟",
+        "a": [
+            "التبرعم",
+            "التحول",
+            "السبات",
+            "التلقيح"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من القائد الذي عبر إلى الأندلس سنة 711م؟",
+        "a": [
+            "موسى بن نصير",
+            "طارق بن زياد",
+            "صلاح الدين",
+            "قتيبة بن مسلم"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من قائد المسلمين في معركة اليرموك الأشهر؟",
+        "a": [
+            "سعد بن أبي وقاص",
+            "خالد بن الوليد",
+            "طارق بن زياد",
+            "عمرو بن العاص"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من العالم الذي صاغ قوانين الحركة الثلاثة؟",
+        "a": [
+            "نيوتن",
+            "أينشتاين",
+            "غاليليو",
+            "كبلر"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في أي سنة أُعلنت استقلال الولايات المتحدة؟",
+        "a": [
+            "1492",
+            "1776",
+            "1789",
+            "1812"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما المدينة التي دُمرت بثوران فيزوف عام 79م؟",
+        "a": [
+            "أثينا",
+            "بومبي",
+            "قرطاج",
+            "الإسكندرية"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الإمبراطورية التي حكمها سليمان القانوني؟",
+        "a": [
+            "الرومانية",
+            "العثمانية",
+            "البيزنطية",
+            "المغولية"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم الوثيقة الإنجليزية الصادرة عام 1215؟",
+        "a": [
+            "وثيقة الحقوق",
+            "الماجنا كارتا",
+            "إعلان الاستقلال",
+            "قانون الإصلاح"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الاسم العلمي لجنس الأسود والنمور والببور؟",
+        "a": [
+            "Canis",
+            "Panthera",
+            "Felis",
+            "Equus"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من مؤلف كتاب «المقدمة» الشهير في علم العمران؟",
+        "a": [
+            "الطبري",
+            "المسعودي",
+            "ابن خلدون",
+            "ابن الأثير"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما القانون الذي يربط الجهد بالتيار والمقاومة؟",
+        "a": [
+            "قانون أوم",
+            "قانون بويل",
+            "قانون كبلر",
+            "قانون باسكال"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما اسم المعركة التي هُزم فيها نابليون نهائياً؟",
+        "a": [
+            "أوسترليتز",
+            "واترلو",
+            "بورودينو",
+            "ترافالغار"
+        ],
+        "c": 1
+    },
+    {
+        "q": "من القائد الفرنسي الذي أصبح إمبراطوراً عام 1804؟",
+        "a": [
+            "لويس الرابع عشر",
+            "نابليون بونابرت",
+            "شارل ديغول",
+            "روبسبيير"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما السنة التي سقطت فيها القسطنطينية بيد العثمانيين؟",
+        "a": [
+            "1204",
+            "1299",
+            "1453",
+            "1492"
+        ],
+        "c": 2
+    },
+    {
+        "q": "من وصل إلى الأمريكتين في رحلته عبر الأطلسي سنة 1492؟",
+        "a": [
+            "ماجلان",
+            "كولومبوس",
+            "فاسكو دا غاما",
+            "جيمس كوك"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما الدولة التي فازت بأول كأس عالم لكرة القدم عام 1930؟",
+        "a": [
+            "البرازيل",
+            "الأوروغواي",
+            "إيطاليا",
+            "الأرجنتين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم السباق الثلاثي الذي يجمع السباحة والدراجات والجري؟",
+        "a": [
+            "العشاري",
+            "الترايثلون",
+            "الخماسي الحديث",
+            "البياثلون"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم العملية التي تصنع بها النباتات غذاءها باستخدام الضوء؟",
+        "a": [
+            "التخمر",
+            "البناء الضوئي",
+            "التنفس",
+            "النتح"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما المعاهدة التي فُرضت على ألمانيا بعد الحرب العالمية الأولى؟",
+        "a": [
+            "فرساي",
+            "وستفاليا",
+            "باريس 1856",
+            "توردسيلاس"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما الدولة التي استضافت أول دورة ألعاب أولمبية حديثة سنة 1896؟",
+        "a": [
+            "فرنسا",
+            "اليونان",
+            "بريطانيا",
+            "إيطاليا"
+        ],
+        "c": 1
+    },
+    {
+        "q": "أي مؤتمر عام 1884–1885 نظّم التنافس الاستعماري الأوروبي في أفريقيا؟",
+        "a": [
+            "فيينا",
+            "برلين",
+            "يالطا",
+            "بوتسدام"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في الشطرنج، ما اسم الحركة التي يتحرك فيها الملك والقلعة في نقلة واحدة؟",
+        "a": [
+            "التبييت",
+            "الترقية",
+            "الأخذ بالتجاوز",
+            "الكش"
+        ],
+        "c": 0
+    },
+    {
+        "q": "في أي سنة وقعت معركة هاستينغز؟",
+        "a": [
+            "800",
+            "1066",
+            "1215",
+            "1346"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي عام هجري وقعت معركة صفين؟",
+        "a": [
+            "25 هـ",
+            "37 هـ",
+            "61 هـ",
+            "73 هـ"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي سنة وُقعت معاهدة وستفاليا؟",
+        "a": [
+            "1494",
+            "1648",
+            "1713",
+            "1815"
+        ],
+        "c": 1
+    },
+    {
+        "q": "في أي سنة ميلادية سقطت بغداد بيد المغول؟",
+        "a": [
+            "1099",
+            "1187",
+            "1258",
+            "1453"
+        ],
+        "c": 2
+    },
+    {
+        "q": "في أي سنة هجرية بدأ حكم الدولة العباسية؟",
+        "a": [
+            "41 هـ",
+            "92 هـ",
+            "132 هـ",
+            "232 هـ"
+        ],
+        "c": 2
+    },
+    {
+        "q": "ما اسم المعركة التي وقعت في السنة الثانية للهجرة؟",
+        "a": [
+            "أحد",
+            "بدر",
+            "الخندق",
+            "حنين"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم الحركة الإصلاحية التي ارتبطت بمارتن لوثر سنة 1517؟",
+        "a": [
+            "الإصلاح البروتستانتي",
+            "النهضة الكارولنجية",
+            "التنوير",
+            "الثورة المجيدة"
+        ],
+        "c": 0
+    },
+    {
+        "q": "أي معركة سنة 732م ارتبطت بتوقف التوسع الأموي في بلاد الفرنجة؟",
+        "a": [
+            "بلاط الشهداء",
+            "الزلاقة",
+            "الأرك",
+            "وادي لكة"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما اسم المعركة التي انتصر فيها المرابطون على قشتالة سنة 1086م؟",
+        "a": [
+            "الأرك",
+            "الزلاقة",
+            "العقاب",
+            "وادي لكة"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم المعركة التي أوقفت التقدم المغولي في بلاد الشام سنة 1260م؟",
+        "a": [
+            "حطين",
+            "عين جالوت",
+            "الزلاقة",
+            "بلاط الشهداء"
+        ],
+        "c": 1
+    },
+    {
+        "q": "ما اسم المعاهدة التي عقدها النبي ﷺ مع قريش في السنة السادسة للهجرة؟",
+        "a": [
+            "صلح الحديبية",
+            "صحيفة المدينة",
+            "صلح الرملة",
+            "عهدة عمر"
+        ],
+        "c": 0
+    },
+    {
+        "q": "ما المعركة البحرية التي هزم فيها البريطانيون الأسطولين الفرنسي والإسباني سنة 1805؟",
+        "a": [
+            "ليبانتو",
+            "ترافالغار",
+            "جوتلاند",
+            "ميدواي"
+        ],
+        "c": 1
+    }
+];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let highestStreak = 0;
+        let acceptingAnswers = false;
+        
+        let timeLeft = 300; 
+        let countdownTimer = null;
+        let isSubmitted = false;
+
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const finaleScreen = document.getElementById('finale-screen');
+        
+        const qText = document.getElementById('question-text');
+        const ansContainer = document.getElementById('answers-container');
+        const nextBtn = document.getElementById('next-btn');
+        const progFill = document.getElementById('progress-fill');
+        const scoreTxt = document.getElementById('score-text');
+        const streakBox = document.getElementById('streak-box');
+        const streakCount = document.getElementById('streak-count');
+        const liveTimerTxt = document.getElementById('live-timer');
+        const timerBox = document.getElementById('timer-box');
+
+        function formatCountdown(sec) {
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+        }
+
+        function startQuizDirectly() {
+            const studentName = document.getElementById("nameInput").value.trim();
+            const studentGrade = document.getElementById("gradeInput").value;
+            const studentSection = document.getElementById("sectionInput").value;
+
+            if (studentName === "" || studentGrade === "" || studentSection === "") {
+                alert("الرجاء التأكد من كتابة الاسم الثلاثي، واختيار الصف والشعبة قبل بدء التحدي!");
+                return;
+            }
+
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            highestStreak = 0;
+            document.getElementById('q-total').innerText = allQuestions.length;
+
+            startCountdown();
+            loadQuestion();
+        }
+
+        function startCountdown() {
+            liveTimerTxt.innerText = formatCountdown(timeLeft);
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                liveTimerTxt.innerText = formatCountdown(timeLeft);
+
+                if (timeLeft <= 60) {
+                    timerBox.classList.add('timer-warning');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    alert("انتهى وقت الاختبار (5 دقائق)! سيتم عرض وإرسال نتيجتك فوراً.");
+                    endQuizAndShowResult();
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            acceptingAnswers = true;
+            nextBtn.classList.add('hidden');
+            const q = allQuestions[currentQuestionIndex];
+            qText.innerText = q.q;
+            document.getElementById('q-current').innerText = currentQuestionIndex + 1;
+            
+            setTimeout(() => {
+                progFill.style.width = `${((currentQuestionIndex) / allQuestions.length) * 100}%`;
+            }, 50);
+            
+            ansContainer.innerHTML = '';
+            q.a.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = answer;
+                btn.classList.add('answer-btn');
+                btn.dataset.index = index;
+                btn.addEventListener('click', selectAnswer);
+                ansContainer.appendChild(btn);
+            });
+            updateStreakDisplay();
+            scoreTxt.innerText = score;
+        }
+
+        function selectAnswer(e) {
+            if (!acceptingAnswers) return;
+            acceptingAnswers = false;
+            
+            const selectedBtn = e.target;
+            const selectedIndex = parseInt(selectedBtn.dataset.index);
+            const correctIndex = allQuestions[currentQuestionIndex].c;
+            
+            if (selectedIndex === correctIndex) {
+                selectedBtn.classList.add('correct');
+                score++;
+                streak++;
+                if (streak > highestStreak) highestStreak = streak;
+                scoreTxt.innerText = score;
+                updateStreakDisplay();
+                fireConfetti();
+            } else {
+                selectedBtn.classList.add('wrong');
+                ansContainer.children[correctIndex].classList.add('correct');
+                streak = 0;
+                updateStreakDisplay();
+                triggerVibrationAndShake();
+            }
+            nextBtn.classList.remove('hidden');
+        }
+
+        function updateStreakDisplay() {
+            if (streak >= 2) {
+                streakBox.classList.remove('hidden');
+                streakCount.innerText = streak;
+                streakBox.style.transform = 'scale(1.1)';
+                setTimeout(() => streakBox.style.transform = 'scale(1)', 200);
+            } else {
+                streakBox.classList.add('hidden');
+            }
+        }
+
+        function fireConfetti() {
+            const colors = ['#fbbf24', '#3b82f6', '#ef4444', '#10b981'];
+            for(let i = 0; i < 35; i++) {
+                let conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                if(Math.random() > 0.5) conf.style.borderRadius = '50%';
+                conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 3500);
+            }
+        }
+
+        function triggerVibrationAndShake() {
+            const container = document.getElementById('quiz-screen');
+            container.classList.remove('shake');
+            void container.offsetWidth; 
+            container.classList.add('shake');
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < allQuestions.length) {
+                loadQuestion();
+            } else {
+                endQuizAndShowResult();
+            }
+        }
+
+        function endQuizAndShowResult() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            if (isSubmitted) return;
+            isSubmitted = true;
+
+            quizScreen.classList.add('hidden');
+            finaleScreen.classList.remove('hidden');
+
+            const studentName = document.getElementById("nameInput").value.trim();
+            const studentGrade = document.getElementById("gradeInput").value;
+            const studentSection = document.getElementById("sectionInput").value;
+
+            document.getElementById('student-summary').innerText = `الطالب: ${studentName} | ${studentGrade} | ${studentSection}`;
+
+            const totalQuestionsPossible = allQuestions.length;
+            const finalPercentage = Math.round((score / totalQuestionsPossible) * 100);
+
+            document.getElementById('finale-score').innerText = score;
+            document.getElementById('total-possible-score').innerText = totalQuestionsPossible;
+            document.getElementById('finale-percent').innerText = finalPercentage;
+            document.getElementById('highest-streak-display').innerText = highestStreak;
+
+            submitStudentResult(score);
+        }
+
+        function submitStudentResult(finalScore) {
+            const studentName = document.getElementById("nameInput").value.trim();
+            const studentGrade = document.getElementById("gradeInput").value;
+            const studentSection = document.getElementById("sectionInput").value;
+            const syncStatus = document.getElementById("sync-status");
+
+            if (studentName === "" || studentGrade === "" || studentSection === "") {
+                syncStatus.innerText = "تعذر الإرسال: البيانات غير مكتملة.";
+                syncStatus.style.color = "var(--primary-red)";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('name', studentName);
+            formData.append('grade', studentGrade);
+            formData.append('section', studentSection);
+            formData.append('score', finalScore);
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => {
+                    console.log('تم الإرسال:', response);
+                    syncStatus.innerText = "✅ تم إرسال وحفظ نتيجتك بنجاح!";
+                    syncStatus.style.color = "var(--primary-green)";
+                })
+                .catch(error => {
+                    console.error('حدث خطأ:', error.message);
+                    syncStatus.innerText = "⚠️ حدث خطأ أثناء إرسال النتيجة إلى السحابة.";
+                    syncStatus.style.color = "var(--primary-red)";
+                });
+        }
+    </script>
+</body>
+</html>
