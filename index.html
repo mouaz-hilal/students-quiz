@@ -93,7 +93,6 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* حقول إدخال بيانات الطالب */
         .input-group {
             text-align: right;
             margin-bottom: 20px;
@@ -158,8 +157,15 @@
         .btn-red:active {
             box-shadow: 0 0 0 var(--dark-red);
         }
+        
+        .btn-small {
+            font-size: 1.2rem;
+            padding: 8px 20px;
+            width: auto;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
 
-        /* واجهة الأسئلة */
         .stats-bar {
             display: flex;
             flex-wrap: wrap;
@@ -339,7 +345,6 @@
         <div class="school-subtitle">مسابقة من سيربح المليون - المرحلة الأولى</div>
     </div>
 
-    <!-- شاشة إدخال البيانات والبدء (بدون مراحل) -->
     <div id="start-screen" class="container">
         <div style="font-size: 4.5rem; margin-bottom: 10px;">📋</div>
         <h2 style="font-size: 2.2rem; font-weight: 900; color: var(--primary-blue); margin-bottom: 20px;">تسجيل بيانات الطالب</h2>
@@ -375,8 +380,8 @@
         <button class="btn-play" onclick="startQuizDirectly()">ابدأ التحدي!</button>
     </div>
 
-    <!-- شاشة الأسئلة المباشرة -->
     <div id="quiz-screen" class="container hidden">
+        <button class="btn-play btn-red btn-small" onclick="resetQuiz()">اختبار طالب جديد 🔄</button>
         <div class="progress-wrapper">
             <div id="progress-fill" class="progress-fill"></div>
         </div>
@@ -397,7 +402,6 @@
         <button id="next-btn" class="btn-play hidden" onclick="nextQuestion()">التالي ➔</button>
     </div>
 
-    <!-- شاشة النتيجة النهائية الكبرى -->
     <div id="finale-screen" class="container hidden">
         <div style="font-size: 5.5rem; margin-bottom: 5px;">🏆</div>
         <h1 style="color: var(--primary-blue); font-weight: 900; font-size: 2.5rem; margin-bottom: 5px;">انتهى الاختبار!</h1>
@@ -419,13 +423,14 @@
 
         <div id="sync-status" class="status-sync">جاري حفظ النتيجة في Google Sheets... ⏳</div>
 
-        <button class="btn-play btn-red" style="margin-top: 20px;" onclick="location.reload()">اختبار طالب آخر 🔄</button>
+        <button id="retry-btn" class="btn-play hidden" style="margin-top: 15px; background: #d97706; border-color: #b45309; box-shadow: 0 8px 0 #b45309;" onclick="submitStudentResult(score)">إعادة إرسال النتيجة 📡</button>
+
+        <button class="btn-play btn-red" style="margin-top: 20px;" onclick="resetQuiz()">اختبار طالب جديد 🔄</button>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwjyHu3_5vP4qkl6viKKzwNsJM0lnrAv1IDfLRWK2WJixbHmysp-WOic7yezYtpOT7A/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbw_UqWY4zjaJ5uV88LTOsMnMGeNHzSnApSx_Xln26GH2mnxHkRvy6aJnndJ6SF7Ds1T/exec';
 
-        // 200 Questions sorted logically by difficulty roughly
         const allQuestions = [
     {
         "q": "ما عاصمة كندا؟",
@@ -2453,12 +2458,116 @@
         const liveTimerTxt = document.getElementById('live-timer');
         const timerBox = document.getElementById('timer-box');
 
-        
+        // ميزة استرجاع التقدم المحفوظ عند تحميل الصفحة
+        window.onload = function() {
+            const savedData = localStorage.getItem('quiz_game_data');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                
+                if (data.studentName) document.getElementById("nameInput").value = data.studentName;
+                if (data.studentGrade) {
+                    document.getElementById("gradeInput").value = data.studentGrade;
+                    updateSections();
+                }
+                if (data.studentSection) document.getElementById("sectionInput").value = data.studentSection;
+
+                currentQuestionIndex = data.currentQuestionIndex || 0;
+                score = data.score || 0;
+                streak = data.streak || 0;
+                highestStreak = data.highestStreak || 0;
+                timeLeft = data.timeLeft !== undefined ? data.timeLeft : 300;
+                isSubmitted = data.isSubmitted || false;
+
+                if (isSubmitted) {
+                    startScreen.classList.add('hidden');
+                    quizScreen.classList.add('hidden');
+                    finaleScreen.classList.remove('hidden');
+                    showFinaleData();
+                } else if (currentQuestionIndex > 0 || timeLeft < 300) {
+                    startScreen.classList.add('hidden');
+                    quizScreen.classList.remove('hidden');
+                    document.getElementById('q-total').innerText = allQuestions.length;
+                    startCountdown();
+                    loadQuestion();
+                }
+            }
+        };
+
+        // ميزة حفظ التقدم
+        function saveProgress() {
+            const data = {
+                studentName: document.getElementById("nameInput").value.trim(),
+                studentGrade: document.getElementById("gradeInput").value,
+                studentSection: document.getElementById("sectionInput").value,
+                currentQuestionIndex: currentQuestionIndex,
+                score: score,
+                streak: streak,
+                highestStreak: highestStreak,
+                timeLeft: timeLeft,
+                isSubmitted: isSubmitted
+            };
+            localStorage.setItem('quiz_game_data', JSON.stringify(data));
+        }
+
+        // ميزة تصفير الاختبار لطالب جديد
+        function resetQuiz() {
+            if (confirm("هل أنت متأكد أنك تريد حذف البيانات الحالية والبدء باختبار طالب جديد؟")) {
+                // 1. مسح التخزين بالكامل لضمان عدم وجود بيانات سابقة
+                localStorage.removeItem('quiz_game_data');
+                localStorage.removeItem('quiz_unlocked_stage');
+                localStorage.removeItem('quiz_global_seconds');
+                localStorage.removeItem('quiz_stage_scores');
+
+                // 2. إيقاف المؤقت إذا كان يعمل
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+
+                // 3. تصفير المتغيرات البرمجية
+                currentQuestionIndex = 0;
+                score = 0;
+                streak = 0;
+                highestStreak = 0;
+                timeLeft = 300;
+                isSubmitted = false;
+                acceptingAnswers = false;
+
+                // 4. تصفير الحقول والنصوص في واجهة المستخدم
+                document.getElementById("nameInput").value = "";
+                document.getElementById("gradeInput").value = "";
+                document.getElementById("sectionInput").innerHTML = '<option value="">اختر الشعبة أولاً</option>';
+                
+                document.getElementById("score-text").innerText = "0";
+                document.getElementById("streak-count").innerText = "0";
+                document.getElementById("streak-box").classList.add("hidden");
+                
+                document.getElementById("live-timer").innerText = "05:00";
+                document.getElementById("timer-box").classList.remove("timer-warning");
+
+                const syncStatus = document.getElementById("sync-status");
+                if (syncStatus) {
+                    syncStatus.innerText = "جاري حفظ النتيجة في Google Sheets... ⏳";
+                    syncStatus.style.color = "var(--dark-blue)";
+                }
+                
+                const retryBtn = document.getElementById("retry-btn");
+                if (retryBtn) retryBtn.classList.add("hidden");
+
+                // 5. إخفاء شاشات الاختبار والنتيجة والعودة لشاشة البداية فوراً
+                document.getElementById("quiz-screen").classList.add("hidden");
+                document.getElementById("finale-screen").classList.add("hidden");
+                document.getElementById("start-screen").classList.remove("hidden");
+                
+                // خطوة إضافية لتحديث الصفحة لمنع تعليق المتصفحات
+                window.scrollTo(0, 0);
+            }
+        }
+
         function updateSections() {
             const grade = document.getElementById('gradeInput').value;
             const sectionSelect = document.getElementById('sectionInput');
             
-            // تفريغ القائمة أولاً
             sectionSelect.innerHTML = '<option value="">اختر الشعبة</option>';
             
             let sectionsCount = 0;
@@ -2466,7 +2575,6 @@
             else if (grade === 'الصف الثامن') sectionsCount = 6;
             else if (grade === 'الصف التاسع') sectionsCount = 2;
             
-            // إضافة الشعب المناسبة
             for (let i = 1; i <= sectionsCount; i++) {
                 const opt = document.createElement('option');
                 opt.value = `الشعبة ${i}`;
@@ -2498,21 +2606,29 @@
             score = 0;
             streak = 0;
             highestStreak = 0;
+            timeLeft = 300;
+            isSubmitted = false;
             document.getElementById('q-total').innerText = allQuestions.length;
 
+            saveProgress();
             startCountdown();
             loadQuestion();
         }
 
         function startCountdown() {
+            if(countdownTimer) clearInterval(countdownTimer);
             liveTimerTxt.innerText = formatCountdown(timeLeft);
             countdownTimer = setInterval(() => {
-                timeLeft--;
+                if (timeLeft > 0) timeLeft--;
                 liveTimerTxt.innerText = formatCountdown(timeLeft);
 
-                if (timeLeft <= 60) {
+                if (timeLeft <= 60 && timeLeft > 0) {
                     timerBox.classList.add('timer-warning');
+                } else {
+                    timerBox.classList.remove('timer-warning');
                 }
+
+                saveProgress(); // الحفظ الدوري للوقت
 
                 if (timeLeft <= 0) {
                     clearInterval(countdownTimer);
@@ -2523,6 +2639,11 @@
         }
 
         function loadQuestion() {
+            if (currentQuestionIndex >= allQuestions.length) {
+                endQuizAndShowResult();
+                return;
+            }
+
             acceptingAnswers = true;
             nextBtn.classList.add('hidden');
             const q = allQuestions[currentQuestionIndex];
@@ -2544,6 +2665,7 @@
             });
             updateStreakDisplay();
             scoreTxt.innerText = score;
+            saveProgress();
         }
 
         function selectAnswer(e) {
@@ -2569,6 +2691,7 @@
                 updateStreakDisplay();
                 triggerVibrationAndShake();
             }
+            saveProgress();
             nextBtn.classList.remove('hidden');
         }
 
@@ -2609,6 +2732,7 @@
 
         function nextQuestion() {
             currentQuestionIndex++;
+            saveProgress();
             if (currentQuestionIndex < allQuestions.length) {
                 loadQuestion();
             } else {
@@ -2620,10 +2744,16 @@
             if (countdownTimer) clearInterval(countdownTimer);
             if (isSubmitted) return;
             isSubmitted = true;
+            saveProgress(); // حفظ النهاية
 
             quizScreen.classList.add('hidden');
             finaleScreen.classList.remove('hidden');
 
+            showFinaleData();
+            submitStudentResult(score);
+        }
+
+        function showFinaleData() {
             const studentName = document.getElementById("nameInput").value.trim();
             const studentGrade = document.getElementById("gradeInput").value;
             const studentSection = document.getElementById("sectionInput").value;
@@ -2637,15 +2767,15 @@
             document.getElementById('total-possible-score').innerText = totalQuestionsPossible;
             document.getElementById('finale-percent').innerText = finalPercentage;
             document.getElementById('highest-streak-display').innerText = highestStreak;
-
-            submitStudentResult(score);
         }
 
         function submitStudentResult(finalScore) {
             const studentName = document.getElementById("nameInput").value.trim();
             const studentGrade = document.getElementById("gradeInput").value;
             const studentSection = document.getElementById("sectionInput").value;
+            
             const syncStatus = document.getElementById("sync-status");
+            const retryBtn = document.getElementById("retry-btn");
 
             if (studentName === "" || studentGrade === "" || studentSection === "") {
                 syncStatus.innerText = "تعذر الإرسال: البيانات غير مكتملة.";
@@ -2653,22 +2783,28 @@
                 return;
             }
 
+            syncStatus.innerText = "جاري إرسال النتيجة... ⏳";
+            syncStatus.style.color = "var(--dark-blue)";
+            if(retryBtn) retryBtn.classList.add('hidden');
+
             const formData = new FormData();
             formData.append('name', studentName);
             formData.append('grade', studentGrade);
             formData.append('section', studentSection);
             formData.append('score', finalScore);
 
-            fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => {
-                    console.log('تم الإرسال:', response);
+            fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' })
+                .then(() => {
+                    console.log('تم الإرسال بنجاح');
                     syncStatus.innerText = "✅ تم إرسال وحفظ نتيجتك بنجاح!";
                     syncStatus.style.color = "var(--primary-green)";
                 })
                 .catch(error => {
-                    console.error('حدث خطأ:', error.message);
-                    syncStatus.innerText = "⚠️ حدث خطأ أثناء إرسال النتيجة إلى السحابة.";
+                    console.error('حدث خطأ بالشبكة:', error.message);
+                    syncStatus.innerText = "⚠️ لم يتم الإرسال بسبب ضعف الإنترنت. يرجى المحاولة مجدداً.";
                     syncStatus.style.color = "var(--primary-red)";
+                    
+                    if(retryBtn) retryBtn.classList.remove('hidden');
                 });
         }
     </script>
